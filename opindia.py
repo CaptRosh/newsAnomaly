@@ -33,7 +33,7 @@ for i in range(1,4):
         articles_text.append(" ".join(i.text for i in article))
     
 for i in range(min(30,len(headlines_text))):
-    with open(f"opindia/opindia_{i}.txt",'w') as file:
+    with open("opindia/opindia_"+ str(i) + ".txt",'w') as file:
         file.write(headlines_text[i])
         file.write("\n")
         file.write(articles_text[i])
