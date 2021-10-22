@@ -1,5 +1,4 @@
 import os
-import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
@@ -9,35 +8,35 @@ import requests
 import warnings
 warnings.filterwarnings("ignore")
 
-for folder in ["indianexpress","ndtv","opindia"]:
+for folder in ["indianexpress","ndtv","newsexp"]:
     os.system(f"rm -rf {folder}")
     os.mkdir(folder)
 
-keys = ["Lakhimpur","Farmers"]
+keys = "Lakhimpur"
 
-#OPINDIA
-global_url = "https://www.opindia.com/page/"
+#NEWSEXP
+global_url = "https://www.newindianexpress.com/topic?term="
 headlines_text=[]
 articles_text = []
 options = Options()
 options.headless = True
 options.add_argument("--log-level-3")
 driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options = options)
+driver2 = webdriver.Chrome(ChromeDriverManager().install(), chrome_options = options)
 
 for i in range(1,4):
-    driver.get(global_url+f"{i}/?s="+ "+".join(keys))
-    print(global_url+f"{i}/?s="+ "+".join(keys))
+    driver.get(global_url+ keys +"&request=ALL&search=short")
     page = bs4.BeautifulSoup(driver.page_source, 'html.parser')
-    headlines = page.find_all('div', {'class':'tdb_module_loop td_module_wrap td-animation-stack'})
+    headlines = page.find_all('div', {'class':'search-row_type'})
     for headline in headlines:
-        headlines_text.append(headline.h3.text)
-        page= requests.get(headline.a['href'])
-        page = bs4.BeautifulSoup(page.text,'lxml')
-        article = page.find_all('p')
+        headlines_text.append(headline.h4.a.text)
+        page= driver2.get(headline.h4.a['href'])
+        page = bs4.BeautifulSoup(driver2.page_source,'lxml')
+        article = page.find('div',{'class':'articlestorycontent'}).find_all('p')
         articles_text.append(" ".join(i.text for i in article))
     
 for i in range(min(30,len(headlines_text))):
-    with open(f"opindia/opindia_{i}.txt",'w') as file:
+    with open(f"newsexp/newsexp_{i}.txt",'w') as file:
         file.write(headlines_text[i])
         file.write("\n")
         file.write(articles_text[i])
@@ -51,7 +50,7 @@ articles_text = []
 driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options = options)
 
 for i in range(1,3):
-    driver.get(global_url + f"{i}/?s=" + '+'.join(keys))
+    driver.get(global_url + f"{i}/?s=" + f'+{keys}')
     page = bs4.BeautifulSoup(driver.page_source, 'html.parser')
     headlines = page.find_all('div', {'class':'details'})
     for headline in headlines:
@@ -74,7 +73,7 @@ global_url = "https://www.ndtv.com/search?searchtext="
 headlines_text=[]
 articles_text = []
 driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options = options)
-driver.get(global_url + '-'.join(keys))
+driver.get(global_url + keys)
 page = bs4.BeautifulSoup(driver.page_source, 'html.parser')
 headlines = page.find_all('div', {'class':'src_itm-ttl'})
 
