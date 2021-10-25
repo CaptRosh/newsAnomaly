@@ -22,8 +22,6 @@ keys = ("Lakhimpur", "Farmer") #Input ka idhar daalna hai string manipulation ka
 driver.get(global_url + '-'.join(keys))
 page = bs4.BeautifulSoup(driver.page_source, 'html.parser')
 
-# driver.find_element_by_xpath('//*[@id="sb_form_go"]').click()
-# time.sleep(3)
 page = bs4.BeautifulSoup(driver.page_source, 'html.parser')
 
 headlines = page.find_all('div', {'class':'src_itm-ttl'})
